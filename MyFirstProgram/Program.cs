@@ -45,7 +45,7 @@ internal class Program
        
         while (true)
         {
-            Console.WriteLine("Press enter to continue or Q to quit");
+            Console.WriteLine("\n~~~Press enter to continue or Q to quit~~~\n");
             var cont = Console.ReadLine();
             if (cont is string && cont.ToUpper() == "Q") {
                 Console.WriteLine($"\nThank you for playing {PlayerName}!");
@@ -60,6 +60,15 @@ internal class Program
             {
                 case "A":
                     problem = new AdditionProblem(Difficulty);
+                    break;
+                case "S":
+                    problem = new SubstractionProblem(Difficulty); 
+                    break;
+                case "M":
+                    problem = new MultiplicationProblem(Difficulty);
+                    break;
+                case "D":
+                    problem = new DivisionProblem(Difficulty);
                     break;
             } 
             Console.WriteLine("\nLET THE MATH GAMES BEGIN!\n");
