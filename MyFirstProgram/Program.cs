@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using MyFirstProgram;
+using System.Collections.Generic;
 
 internal class Program
 {
-
     static string PlayerName = string.Empty;
     static string ChallengeSelection = string.Empty;
     static int Difficulty;
     static int Score = 0;
 
-    const string ChallengeOptionsMenu = @"Choose where to prove them wrong: 
+    const string ChallengeOptionsMenu = @"Choose where to prove the haters wrong: 
             A - Addition
             S - Substraction
             M - Multiplication
@@ -41,9 +41,47 @@ internal class Program
     {
         GetName();
         ShowIntro();
-        GetChallenge();
-        GetDifficulty();
-        StartGame();
+
+       
+        while (true)
+        {
+            Console.WriteLine("Press enter to continue or Q to quit");
+            var cont = Console.ReadLine();
+            if (cont is string && cont.ToUpper() == "Q") {
+                Console.WriteLine($"\nThank you for playing {PlayerName}!");
+                Console.WriteLine($"Your score was: {Score}");
+                Console.WriteLine("Press any enter to exit.");
+                Environment.Exit(0);
+            } 
+            GetChallenge();
+            GetDifficulty();
+            Problem problem = null;
+            switch (ChallengeSelection)
+            {
+                case "A":
+                    problem = new AdditionProblem(Difficulty);
+                    break;
+            } 
+            Console.WriteLine("\nLET THE MATH GAMES BEGIN!\n");
+            while (true)
+            {
+                problem.GenerateNextProblem();
+                Console.WriteLine(problem.ProblemText);
+                Console.WriteLine($"{PlayerName} Score: {Score}. You are playing {ChallengeOptions[ChallengeSelection]} in {DifficultyOptions[Difficulty]}.");
+                Console.WriteLine("To go back to main menu, select M.");
+                var answer = Console.ReadLine();
+                if (answer is string && answer.ToUpper() == "M") break;
+                if (int.TryParse(answer, out int intAnswer) && problem.CheckAnswer(intAnswer))
+                {
+                    Console.WriteLine("Correct answer. Good job champ!\n");
+                    Score += Difficulty;
+                }
+                else
+                {
+                    Console.WriteLine("Wrong answer foo. Maybe them haters are right.\n");
+                }
+            }
+        }
 
     }
 
@@ -71,27 +109,22 @@ internal class Program
         DateTime date = DateTime.UtcNow;
         Console.WriteLine("----------------------------------------");
         Console.WriteLine($"Hey foo {PlayerName}. It's {date}. People say you suck at math. Prove them wrong");
-        Console.WriteLine(ChallengeOptionsMenu);
         Console.WriteLine("----YOUR REPUTATION IS ON THE LINE FOO-----");
     }
 
     static void GetChallenge()
     {
         bool correctSelection = false;
-
+        Console.WriteLine(ChallengeOptionsMenu);
         while (!correctSelection)
         {
             var sel = Console.ReadLine();
-            if (sel is not null)
+            if (sel is not null && ChallengeOptions.ContainsKey(sel.ToUpper()))
             {
-                sel = sel.ToUpper();
-                 if (ChallengeOptions.ContainsKey(sel))
-                    {
-                        correctSelection = true;
-                        ChallengeSelection = sel;
-                    }
+                correctSelection = true;
+                ChallengeSelection = sel.ToUpper();
             }
-           
+
             else Console.WriteLine("Invalid choice foo");
         }
 
@@ -108,23 +141,14 @@ internal class Program
             var sel = Console.ReadLine();
             if (int.TryParse(sel, out int trySel))
             {
-                if (trySel > 0 && trySel < 4)
+                if (trySel > 0 && trySel < 5)
                 {
                     difficultySelectionSuccess = true;
                     Difficulty = trySel;
                 }
             }
-            if(!difficultySelectionSuccess) Console.WriteLine("Invalid Choice. Select Again.");
+            if (!difficultySelectionSuccess) Console.WriteLine("Invalid Choice. Select Again.");
         }
+        Console.WriteLine($"You have selected {DifficultyOptions[Difficulty]}");
     }
-
-    static void StartGame()
-    {
-        Console.WriteLine(@$"GAME IS STARTING!
-        {PlayerName} you are playing {ChallengeOptions[ChallengeSelection]} challenge in {DifficultyOptions[Difficulty]} mode.
-        Your current score is {Score}");
-
-    }
-
-    
 }
